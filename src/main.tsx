@@ -3,8 +3,43 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
+// Capacitor native plugin initialization
+async function initCapacitor() {
+  try {
+    const { Capacitor } = await import('@capacitor/core')
+    
+    if (Capacitor.isNativePlatform()) {
+      // Status bar configuration
+      const { StatusBar } = await import('@capacitor/status-bar')
+      await StatusBar.setBackgroundColor({ color: '#1e40af' })
+      
+      // Splash screen auto-hide after app renders
+      const { SplashScreen } = await import('@capacitor/splash-screen')
+      await SplashScreen.hide()
+      
+      // Handle hardware back button
+      const { App: CapApp } = await import('@capacitor/app')
+      CapApp.addListener('backButton', ({ canGoBack }) => {
+        if (canGoBack) {
+          window.history.back()
+        } else {
+          CapApp.exitApp()
+        }
+      })
+
+      console.log('[CampusOne] Native platform initialized')
+    }
+  } catch (e) {
+    // Running in web browser — plugins not available
+    console.log('[CampusOne] Running in web mode')
+  }
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 )
+
+// Initialize native features after render
+initCapacitor()

@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108"
+    android:tint="#FFFFFF">
+    <!-- Campus Building -->
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M54,30L38,40L38,74L70,74L70,40Z"/>
+    <!-- Window left -->
+    <path
+        android:fillColor="#1e40af"
+        android:pathData="M43,46L43,54L49,54L49,46Z"/>
+    <!-- Window right -->
+    <path
+        android:fillColor="#1e40af"
+        android:pathData="M59,46L59,54L65,54L65,46Z"/>
+    <!-- Door -->
+    <path
+        android:fillColor="#1e40af"
+        android:pathData="M50,60L50,74L58,74L58,60Z"/>
+    <!-- Flag pole -->
+    <path
+        android:strokeColor="#ffffff"
+        android:strokeWidth="2"
+        android:pathData="M54,22L54,30"/>
+    <!-- Flag -->
+    <path
+        android:fillColor="#60a5fa"
+        android:pathData="M54,22L54,28L62,25Z"/>
+</vector>
