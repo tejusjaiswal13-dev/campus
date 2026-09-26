@@ -8,7 +8,7 @@ A complete, modern, mobile-first centralized campus platform built for a college
 ---
 
 ## 🏛️ The 5 Centers of IPS UOA
-1. **CCET** — Center of Computer Education & Training (BCA, MCA, PGDCA)
+1. **CCET** — Center of Computer Education & Training (BCA, MCA)
 2. **CFT** — Center of Food Technology (B.Sc FT, M.Sc FT, DFSQA)
 3. **CMS** — Center of Media Studies (BA Media Studies, MJMC)
 4. **CFDT** — Center of Fashion Design & Technology (B.Voc FD, M.Voc FM)
