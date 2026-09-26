@@ -18,7 +18,8 @@
 | **Enrollment / Roll No.** | IPS2023-BCA-042 |
 | **Department / Center** | Center of Computer Education & Training (CCET), IPS, University of Allahabad |
 | **Faculty Supervisor / Guide** | Faculty Coordinator, CCET, IPS UoA |
-| **Target Platform** | Progressive Web App (PWA) / Responsive Mobile-First Web Architecture |
+| **Target Platform** | Android Native Application (APK via Capacitor 8 + Gradle) & Responsive Web |
+| **Android Package / ID** | `com.ips.campusone` (CampusOne) |
 | **Repository URL** | [https://github.com/tejusjaiswal13-dev/campus](https://github.com/tejusjaiswal13-dev/campus) |
 
 ---
@@ -286,6 +287,8 @@ Status: APPROVED          Status: REJECTED
 | **Build Tool** | **Vite 6** | Ultra-fast Hot Module Replacement (HMR) during development and optimized tree-shaken production bundles (sub-1.2s builds). |
 | **Styling & Design System** | **Tailwind CSS v4** | Modern utility-first CSS delivering institutional color schemes (`#0A192F` academic navy, `#D97706` gold accent) without bloated CSS files. |
 | **Iconography** | **Lucide React** | Clean, accessible SVG iconography with consistent visual weight across mobile and desktop. |
+| **Native Mobile Bridge** | **Capacitor 8** | Bridges web presentation layer to Android OS APIs, handling status bar styling, hardware back button, native splash screen, and local notifications. |
+| **Android Build System** | **Gradle 8.14.3 / AGP 8.13** | Automated compilation, resource crunching, DEXing, and APK generation targeting Android SDK API 36 (`minSdkVersion` 24). |
 | **Animations & Celebration** | **Canvas Confetti** | Delivers immediate tactile feedback when students complete seminar bookings. |
 | **Data Persistence** | **Reactive LocalStorage Layer** | Instant client-side persistence and state hydration with zero external database configuration friction for academic evaluation. |
 
@@ -322,6 +325,8 @@ The application underwent rigorous verification to ensure production stability:
    - *Test Case*: Dr. Pradeep Kumar submitted notice proposal *"Guest Lecture on Cloud Architecture"*. Verified status initialized to `PENDING_APPROVAL`. Switched to HOD Prof. R. S. Yadav, approved the proposal in the HOD Desk, and confirmed immediate live broadcast to students.
 5. **Event Seat Booking Verification**:
    - *Test Case*: Reserved seat for the AI & Machine Learning workshop. Confirmed seat count dropped by 1, generated ticket code `IPS-2026-CCET-8491`, and launched celebratory confetti.
+6. **Native Android APK Compilation & Build Verification**:
+   - *Test Case*: Executed `./gradlew assembleDebug` with Temurin JDK 21 and Android SDK Build-Tools 35/36. Build succeeded in 2m 54s with all 304 actionable Gradle tasks passing. Produced standalone debug APK (`CampusOne.apk`, 4.18 MB) with native splash screen, branded app icon, and hardware back-button listener.
 
 ---
 
