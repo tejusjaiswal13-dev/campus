@@ -39,7 +39,7 @@ export const BottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-2xl py-1 md:hidden max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/80 shadow-2xl py-1.5 md:hidden max-w-md mx-auto">
       <div className="flex items-center justify-around px-2">
         {tabs.map(tab => {
           const Icon = tab.icon;
@@ -49,27 +49,31 @@ export const BottomNav: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setCurrentTab(tab.id)}
-              className={`relative flex flex-col items-center py-1 px-3 rounded-2xl transition-all select-none cursor-pointer ${
+              className={`relative flex flex-col items-center py-1 px-3 rounded-2xl transition-all duration-150 select-none cursor-pointer active:scale-90 ${
                 isActive
-                  ? 'text-blue-900 font-bold scale-105'
-                  : 'text-slate-500 hover:text-slate-700 font-medium'
+                  ? 'text-indigo-950 font-black'
+                  : 'text-slate-400 hover:text-slate-600 font-medium'
               }`}
             >
-              <div className="relative">
-                <Icon
-                  className={`w-5 h-5 transition-transform ${
-                    isActive ? 'stroke-[2.5px]' : 'stroke-2'
-                  }`}
-                />
-                {tab.badge && (
-                  <span className="absolute -top-1 -right-2 w-4 h-4 bg-amber-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
-                    {tab.badge}
-                  </span>
-                )}
+              <div className={`p-1 rounded-xl transition-colors ${isActive ? 'bg-indigo-50 text-indigo-900' : ''}`}>
+                <div className="relative">
+                  <Icon
+                    className={`w-5 h-5 transition-transform ${
+                      isActive ? 'stroke-[2.5px] scale-105 text-indigo-900' : 'stroke-2'
+                    }`}
+                  />
+                  {tab.badge && (
+                    <span className="absolute -top-1 -right-2 min-w-[16px] h-4 bg-amber-500 text-slate-950 text-[9px] font-black rounded-full flex items-center justify-center px-1 animate-pulse border border-white">
+                      {tab.badge}
+                    </span>
+                  )}
+                </div>
               </div>
-              <span className="text-[11px] mt-0.5 tracking-tight">{tab.label}</span>
+              <span className={`text-[10px] tracking-tight ${isActive ? 'font-bold text-indigo-950' : 'font-medium'}`}>
+                {tab.label}
+              </span>
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-900 mt-0.5" />
+                <span className="w-1 h-1 rounded-full bg-indigo-900 mt-0.5 animate-fade-in" />
               )}
             </button>
           );

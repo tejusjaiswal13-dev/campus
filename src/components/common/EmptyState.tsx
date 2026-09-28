@@ -1,5 +1,5 @@
 import React from 'react';
-import { LucideIcon, Inbox } from 'lucide-react';
+import { LucideIcon, Inbox, Sparkles } from 'lucide-react';
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -7,6 +7,7 @@ interface EmptyStateProps {
   description: string;
   actionText?: string;
   onAction?: () => void;
+  secondaryTip?: string;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -14,21 +15,42 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
   actionText,
-  onAction
+  onAction,
+  secondaryTip
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-2xl border-2 border-dashed border-slate-200 bg-white/60">
-      <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-3.5 shadow-xs">
-        <Icon className="w-7 h-7" />
+    <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-3xl border-2 border-dashed border-slate-200/80 bg-gradient-to-b from-white to-slate-50/60 shadow-2xs my-4">
+      {/* Icon with layered soft rings */}
+      <div className="relative mb-4">
+        <div className="w-16 h-16 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-xs">
+          <Icon className="w-8 h-8 stroke-[1.75]" />
+        </div>
+        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] font-black shadow-xs">
+          ✦
+        </div>
       </div>
-      <h3 className="text-base font-semibold text-slate-900 mb-1">{title}</h3>
-      <p className="text-sm text-slate-500 max-w-sm mb-4">{description}</p>
+
+      <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-1.5">
+        {title}
+      </h3>
+
+      <p className="text-xs sm:text-sm text-slate-500 max-w-sm mb-4 leading-relaxed">
+        {description}
+      </p>
+
+      {secondaryTip && (
+        <div className="mb-4 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-[11px] font-medium max-w-xs">
+          💡 {secondaryTip}
+        </div>
+      )}
+
       {actionText && onAction && (
         <button
           onClick={onAction}
-          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-blue-900 hover:bg-blue-800 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-indigo-900 hover:bg-indigo-800 rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer"
         >
-          {actionText}
+          <span>{actionText}</span>
+          <span className="text-amber-400 font-black">→</span>
         </button>
       )}
     </div>

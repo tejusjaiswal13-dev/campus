@@ -17,17 +17,31 @@ import {
   CheckCircle2,
   ExternalLink,
   ShieldCheck,
-  UserCheck
+  UserCheck,
+  Calendar,
+  Ticket,
+  Clock,
+  QrCode,
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
 
 export const UserProfileView: React.FC = () => {
   const { currentUser, role, logout, updateProfile } = useAuth();
-  const { setCurrentTab, setIsNotificationCenterOpen, setIsRoleSwitcherOpen, showToast } = useApp();
+  const {
+    setCurrentTab,
+    setIsNotificationCenterOpen,
+    setIsRoleSwitcherOpen,
+    showToast,
+    bookmarks,
+    registrations,
+    exams
+  } = useApp();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editName, setEditName] = useState(currentUser?.name || '');
   const [editPhone, setEditPhone] = useState(currentUser?.phone || '');
-  const [editSemester, setEditSemester] = useState(currentUser?.semester || 4);
+  const [editSemester, setEditSemester] = useState(currentUser?.semester || 5);
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
 
@@ -38,170 +52,253 @@ export const UserProfileView: React.FC = () => {
       semester: Number(editSemester)
     });
     setIsEditModalOpen(false);
-    showToast('Profile updated successfully! ✨', 'success');
+    showToast('Student credentials updated successfully! ✨', 'success');
   };
 
-  return (
-    <div className="space-y-5 pb-16 md:pb-6 text-left max-w-2xl mx-auto">
-      {/* Profile Card Header */}
-      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xs text-center relative overflow-hidden">
-        {/* Background gradient bar */}
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-r from-blue-900 via-slate-900 to-indigo-950" />
+  const studentExams = exams.filter(
+    e => e.departmentCode === (currentUser?.departmentCode || 'CCET')
+  );
 
-        <div className="relative pt-6">
-          <div className="relative inline-block mb-3">
+  return (
+    <div className="space-y-6 pb-20 md:pb-8 text-left max-w-2xl mx-auto">
+      {/* Visual Student Identity Card */}
+      <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 text-white rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl relative overflow-hidden">
+        {/* Subtle decorative security watermark */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+        {/* Card Header: Institution Branding */}
+        <div className="flex items-center justify-between pb-4 border-b border-white/10 relative z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-blue-700/60 border border-amber-400/40 flex items-center justify-center p-1 shadow-inner">
+              <svg viewBox="0 0 24 24" className="w-full h-full text-amber-400 fill-current">
+                <path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2z" />
+                <path d="M4 10.77V16c0 2.76 3.58 5 8 5s8-2.24 8-5v-5.23l-8 3.64-8-3.64z" className="text-white fill-current opacity-90" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-black tracking-wider text-amber-300 uppercase">
+                University of Allahabad
+              </h4>
+              <p className="text-[10px] text-slate-300">
+                Institute of Professional Studies (IPS)
+              </p>
+            </div>
+          </div>
+
+          <span className="text-[9px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            Official ID
+          </span>
+        </div>
+
+        {/* Card Middle: Photo + Credentials */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 pt-5 relative z-10">
+          <div className="relative shrink-0">
             <img
               src={currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
               alt={currentUser?.name || 'User'}
-              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg mx-auto"
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-amber-400/60 shadow-xl"
             />
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="absolute bottom-1 right-1 p-2 bg-blue-900 text-white rounded-full shadow-md hover:bg-blue-800 transition-transform active:scale-95"
+              className="absolute -bottom-1 -right-1 p-1.5 bg-amber-400 text-slate-950 rounded-xl shadow-md hover:bg-amber-300 transition-transform active:scale-95 cursor-pointer"
               title="Edit Profile"
             >
               <Edit3 className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <h2 className="text-xl font-black text-slate-900">{currentUser?.name}</h2>
-          <div className="flex items-center justify-center gap-2 mt-1.5 flex-wrap">
-            <RoleBadge role={role} size="md" />
-            <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-mono font-bold">
-              ID: {currentUser?.studentOrEmpId}
-            </span>
-          </div>
+          <div className="space-y-1.5 text-center sm:text-left flex-1 min-w-0">
+            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+              <h2 className="text-lg sm:text-xl font-black text-white leading-tight">
+                {currentUser?.name}
+              </h2>
+              <RoleBadge role={role} size="sm" />
+            </div>
 
-          <p className="text-xs font-semibold text-blue-900 mt-2">
-            {currentUser?.course || currentUser?.designation || 'Academic Scholar'}
-          </p>
-          <p className="text-xs text-slate-500">
-            Center of {currentUser?.departmentName} ({currentUser?.departmentCode})
-          </p>
+            <p className="text-xs font-semibold text-amber-300">
+              {currentUser?.course || currentUser?.designation || 'Academic Scholar'}
+            </p>
+
+            <p className="text-xs text-slate-300">
+              Center of {currentUser?.departmentName} ({currentUser?.departmentCode})
+            </p>
+
+            <div className="flex items-center justify-center sm:justify-start gap-2 pt-1 flex-wrap">
+              <span className="text-[11px] font-mono font-bold bg-white/10 px-2 py-0.5 rounded border border-white/15 text-slate-200">
+                Roll: {currentUser?.studentOrEmpId}
+              </span>
+              <span className="text-[11px] font-bold bg-indigo-900/60 text-indigo-200 px-2 py-0.5 rounded border border-indigo-700/50">
+                {currentUser?.semester ? `Semester ${currentUser.semester}` : 'Active Faculty'}
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Academic detail pills */}
-        <div className="mt-6 pt-5 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 gap-3 text-left">
-          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Department</span>
-            <span className="font-bold text-slate-800 text-xs truncate block">{currentUser?.departmentCode}</span>
-          </div>
-
-          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Current Status</span>
-            <span className="font-bold text-emerald-700 text-xs block">
-              {currentUser?.semester ? `Semester ${currentUser.semester}` : 'Active Staff'}
-            </span>
-          </div>
-
-          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 col-span-2 sm:col-span-1">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Academic Term</span>
-            <span className="font-bold text-slate-800 text-xs block">Odd Sem 2026</span>
-          </div>
+        {/* Card Footer: Decorative Barcode / Verification strip */}
+        <div className="mt-5 pt-3.5 border-t border-white/10 flex items-center justify-between text-[10px] text-slate-400 font-mono relative z-10">
+          <span>CAMPUSONE-IPS-UOA-2026</span>
+          <span className="text-amber-400 font-bold">DIGITAL IDENTITY VERIFIED ✓</span>
         </div>
       </div>
 
-      {/* Student credentials & Contacts list */}
+      {/* 4 Quick Academic Shortcuts / Metrics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Bookmarks */}
+        <button
+          onClick={() => setCurrentTab('bookmarks')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left flex flex-col justify-between cursor-pointer group active:scale-95"
+        >
+          <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200 group-hover:scale-105 transition-transform mb-2">
+            <Bookmark className="w-4 h-4 fill-amber-500" />
+          </div>
+          <div>
+            <span className="text-lg font-black text-slate-900 block leading-tight">
+              {bookmarks.length}
+            </span>
+            <span className="text-[11px] font-medium text-slate-500">Saved Circulars</span>
+          </div>
+        </button>
+
+        {/* Registered Passes */}
+        <button
+          onClick={() => setCurrentTab('events')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left flex flex-col justify-between cursor-pointer group active:scale-95"
+        >
+          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200 group-hover:scale-105 transition-transform mb-2">
+            <Ticket className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="text-lg font-black text-slate-900 block leading-tight">
+              {registrations.length}
+            </span>
+            <span className="text-[11px] font-medium text-slate-500">Event Passes</span>
+          </div>
+        </button>
+
+        {/* Timetable shortcut */}
+        <button
+          onClick={() => setCurrentTab('home')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left flex flex-col justify-between cursor-pointer group active:scale-95"
+        >
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center border border-indigo-200 group-hover:scale-105 transition-transform mb-2">
+            <Clock className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="text-sm font-bold text-slate-900 block leading-tight">
+              Today's Slots
+            </span>
+            <span className="text-[11px] font-medium text-slate-500">Class Tracker →</span>
+          </div>
+        </button>
+
+        {/* Exam Datesheet */}
+        <button
+          onClick={() => setCurrentTab('exams')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all text-left flex flex-col justify-between cursor-pointer group active:scale-95"
+        >
+          <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center border border-rose-200 group-hover:scale-105 transition-transform mb-2">
+            <GraduationCap className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="text-lg font-black text-slate-900 block leading-tight">
+              {studentExams.length}
+            </span>
+            <span className="text-[11px] font-medium text-slate-500">Scheduled Exams</span>
+          </div>
+        </button>
+      </div>
+
+      {/* Account & Contact Information Card */}
       <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-xs space-y-3">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-          Account & Contact Information
+          Registered Academic Contact Details
         </h3>
 
         <div className="space-y-2 text-xs text-slate-700">
-          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
             <div className="flex items-center gap-2.5">
-              <Mail className="w-4 h-4 text-blue-900" />
-              <span>Official Email</span>
+              <Mail className="w-4 h-4 text-indigo-600" />
+              <span>Official Institutional Email</span>
             </div>
             <span className="font-semibold text-slate-900">{currentUser?.email}</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
             <div className="flex items-center gap-2.5">
-              <Phone className="w-4 h-4 text-blue-900" />
-              <span>Contact Number</span>
+              <Phone className="w-4 h-4 text-indigo-600" />
+              <span>Phone Number</span>
             </div>
             <span className="font-semibold text-slate-900">{currentUser?.phone || '+91 98765 43210'}</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
             <div className="flex items-center gap-2.5">
-              <Building2 className="w-4 h-4 text-blue-900" />
-              <span>Host Institute</span>
+              <Building2 className="w-4 h-4 text-indigo-600" />
+              <span>Parent Academic Body</span>
             </div>
-            <span className="font-semibold text-slate-900">IPS, University of Allahabad</span>
+            <span className="font-semibold text-slate-900">Institute of Professional Studies, UoA</span>
           </div>
         </div>
       </div>
 
-      {/* Actions & Settings Menu */}
+      {/* Student Action Menu */}
       <div className="bg-white rounded-3xl p-2.5 border border-slate-200 shadow-xs divide-y divide-slate-100 text-xs font-semibold text-slate-700">
         <button
           onClick={() => setIsEditModalOpen(true)}
-          className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <Edit3 className="w-4 h-4 text-slate-500" />
-            <span>Edit Profile & Phone</span>
+            <span>Update Phone & Semester</span>
           </div>
-          <span className="text-slate-400">›</span>
+          <ChevronRight className="w-4 h-4 text-slate-400" />
         </button>
 
         <button
           onClick={() => setIsNotificationCenterOpen(true)}
-          className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <Bell className="w-4 h-4 text-slate-500" />
-            <span>Notification Preferences</span>
+            <span>Notification & Circular Alerts</span>
           </div>
-          <span className="text-slate-400">›</span>
-        </button>
-
-        <button
-          onClick={() => setCurrentTab('bookmarks')}
-          className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <Bookmark className="w-4 h-4 text-slate-500" />
-            <span>Saved Circulars & Bookmarks</span>
-          </div>
-          <span className="text-slate-400">›</span>
+          <ChevronRight className="w-4 h-4 text-slate-400" />
         </button>
 
         <button
           onClick={() => setIsRoleSwitcherOpen(true)}
-          className="w-full flex items-center justify-between p-3 hover:bg-amber-50 rounded-xl transition-colors cursor-pointer text-amber-900"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50 rounded-2xl transition-colors cursor-pointer text-amber-900"
         >
           <div className="flex items-center gap-3">
             <UserCheck className="w-4 h-4 text-amber-600" />
             <span>Switch Role for Evaluation Demo</span>
           </div>
-          <span className="text-amber-600 font-bold text-[11px] bg-amber-100 px-2 py-0.5 rounded">
+          <span className="text-amber-700 font-bold text-[11px] bg-amber-100 px-2 py-0.5 rounded-md">
             Evaluator Mode
           </span>
         </button>
 
         <button
           onClick={() => setShowHelpModal(true)}
-          className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <HelpCircle className="w-4 h-4 text-slate-500" />
-            <span>Student Helpdesk & Grievances</span>
+            <span>IPS Student Grievance & Helpdesk</span>
           </div>
-          <span className="text-slate-400">›</span>
+          <ChevronRight className="w-4 h-4 text-slate-400" />
         </button>
 
         <button
           onClick={() => setShowAboutModal(true)}
-          className="w-full flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <Info className="w-4 h-4 text-slate-500" />
-            <span>About IPS UOA Portal & Minor Project</span>
+            <span>About CampusOne & Minor Project</span>
           </div>
-          <span className="text-slate-400">›</span>
+          <ChevronRight className="w-4 h-4 text-slate-400" />
         </button>
 
         <button
@@ -209,13 +306,13 @@ export const UserProfileView: React.FC = () => {
             logout();
             setCurrentTab('auth');
           }}
-          className="w-full flex items-center justify-between p-3 hover:bg-rose-50 text-rose-600 rounded-xl transition-colors cursor-pointer"
+          className="w-full flex items-center justify-between p-3.5 hover:bg-rose-50 text-rose-600 rounded-2xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
             <LogOut className="w-4 h-4 text-rose-600" />
-            <span>Sign Out from Campus Portal</span>
+            <span>Sign Out of CampusOne</span>
           </div>
-          <span className="text-rose-400">›</span>
+          <ChevronRight className="w-4 h-4 text-rose-400" />
         </button>
       </div>
 
@@ -270,13 +367,13 @@ export const UserProfileView: React.FC = () => {
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-xl cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveProfile}
-                className="px-5 py-2 text-xs font-bold text-white bg-blue-900 hover:bg-blue-800 rounded-xl shadow-xs"
+                className="px-5 py-2 text-xs font-bold text-white bg-indigo-900 hover:bg-indigo-800 rounded-xl shadow-xs cursor-pointer"
               >
                 Save Changes
               </button>
@@ -289,20 +386,20 @@ export const UserProfileView: React.FC = () => {
       {showAboutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-200 overflow-hidden p-6 space-y-4 text-left">
-            <h3 className="text-base font-bold text-slate-900">About IPS UOA Portal</h3>
+            <h3 className="text-base font-bold text-slate-900">About CampusOne</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              <strong>IPS UOA</strong> is a centralized college campus management and information system developed as an authentic college minor project for the Institute of Professional Studies, University of Allahabad.
+              <strong>CampusOne</strong> is the centralized, mobile-first campus information and management mobile application built for the Institute of Professional Studies (IPS), University of Allahabad.
             </p>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Designed around a <strong>Department-Aware Architecture</strong> with 4-tier role-based access (Student, Faculty, Department Admin / HOD, College Admin), solving information fragmentation across WhatsApp, physical notice boards, and disparate web portals.
+              Tagline: <em>"One Campus. One Platform. All Information."</em>
             </p>
-            <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-[11px] text-blue-950 font-medium">
-              "One Campus. One Platform. All Information."
+            <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-200 text-[11px] text-indigo-950 font-medium">
+              Candidate: Tejus Jaiswal (BCA, CCET) • Roll No: IPS2023-BCA-042
             </div>
             <div className="flex justify-end">
               <button
                 onClick={() => setShowAboutModal(false)}
-                className="px-4 py-2 text-xs font-bold text-white bg-blue-900 rounded-xl"
+                className="px-4 py-2 text-xs font-bold text-white bg-indigo-900 rounded-xl cursor-pointer"
               >
                 Close
               </button>
@@ -325,7 +422,7 @@ export const UserProfileView: React.FC = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => setShowHelpModal(false)}
-                className="px-4 py-2 text-xs font-bold text-white bg-blue-900 rounded-xl"
+                className="px-4 py-2 text-xs font-bold text-white bg-indigo-900 rounded-xl cursor-pointer"
               >
                 Close
               </button>

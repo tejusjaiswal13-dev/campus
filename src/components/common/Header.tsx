@@ -11,6 +11,7 @@ import {
   UserCheck,
   Bookmark
 } from 'lucide-react';
+import { CampusBeacon } from './CampusBeacon';
 
 export const Header: React.FC = () => {
   const { currentUser, role } = useAuth();
@@ -42,11 +43,12 @@ export const Header: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent">
-                IPS UOA
+              <span className="font-black text-base sm:text-lg tracking-tight text-white flex items-center gap-1">
+                <span>Campus</span>
+                <span className="text-amber-400">One</span>
               </span>
-              <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-blue-950 border border-blue-800 text-blue-300">
-                CAMPUS
+              <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-800 text-blue-300">
+                IPS UOA
               </span>
             </div>
             <p className="text-[10px] sm:text-xs text-slate-400 font-medium truncate max-w-[160px] sm:max-w-none">
@@ -155,10 +157,9 @@ export const Header: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="text-[11px] text-slate-400 hidden sm:flex items-center gap-3">
-            <span>Session 2026-27</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-emerald-400 font-medium">Campus Live</span>
+          <div className="text-[11px] text-slate-400 flex items-center gap-2">
+            <span className="hidden sm:inline">Session 2026-27</span>
+            <CampusBeacon />
           </div>
         </div>
       )}
