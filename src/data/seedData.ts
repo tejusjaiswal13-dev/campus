@@ -8,7 +8,8 @@ import {
   AcademicCalendarItem,
   FacultyMember,
   CampusFacility,
-  InAppNotification
+  InAppNotification,
+  DirectClassNotice
 } from '../types';
 
 export const SEED_DEPARTMENTS: Department[] = [
@@ -145,7 +146,7 @@ export const SEED_USERS: User[] = [
     departmentCode: 'CCET',
     departmentName: 'Computer Applications',
     course: 'Bachelor of Computer Applications (BCA)',
-    semester: 4,
+    semester: 5,
     phone: '+91 98765 43210',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
     createdAt: '2024-07-15'
@@ -164,6 +165,26 @@ export const SEED_USERS: User[] = [
     cabinOrOffice: 'Faculty Cabin #3, 1st Floor, CCET Building',
     phone: '+91 94501 23456',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+    assignedClasses: [
+      {
+        id: 'cls-assign-1',
+        course: 'BCA',
+        semester: 5,
+        subjectCode: 'BCA-502',
+        subjectName: 'Database Management Systems & SQL',
+        room: 'Room B-204 (2nd Floor)',
+        studentCount: 64
+      },
+      {
+        id: 'cls-assign-2',
+        course: 'MCA',
+        semester: 3,
+        subjectCode: 'MCA-301',
+        subjectName: 'Advanced Database Systems & Distributed NoSQL',
+        room: 'Software Lab 2',
+        studentCount: 48
+      }
+    ],
     createdAt: '2022-01-10'
   },
   {
@@ -1128,5 +1149,40 @@ export const SEED_NOTIFICATIONS: InAppNotification[] = [
     linkTarget: { tab: 'dept-admin' },
     isRead: false,
     createdAt: '2026-09-08T08:35:00Z'
+  }
+];
+
+export const SEED_CLASS_NOTICES: DirectClassNotice[] = [
+  {
+    id: 'cn-01',
+    facultyId: 'user-faculty-1',
+    facultyName: 'Dr. Pradeep Kumar',
+    facultyDesignation: 'Assistant Professor, CCET',
+    departmentCode: 'CCET',
+    course: 'BCA',
+    semester: 5,
+    subjectCode: 'BCA-502',
+    subjectName: 'Database Management Systems & SQL',
+    title: "Today's 10:30 AM Class Room Relocation",
+    message: "Today's Database Management Systems lecture will be conducted in Computer Lab 3 instead of Room B-204 for hands-on SQL query profiling. Please be seated by 10:35 AM.",
+    noticeType: 'ROOM_CHANGED',
+    createdAt: '2026-09-29T09:15:00Z',
+    readByUserIds: []
+  },
+  {
+    id: 'cn-02',
+    facultyId: 'user-faculty-1',
+    facultyName: 'Dr. Pradeep Kumar',
+    facultyDesignation: 'Assistant Professor, CCET',
+    departmentCode: 'CCET',
+    course: 'BCA',
+    semester: 5,
+    subjectCode: 'BCA-502',
+    subjectName: 'Database Management Systems & SQL',
+    title: 'Assignment 2 Submission Reminder',
+    message: 'Normalization (3NF & BCNF) problem sets must be submitted hardcopy before Friday 04:00 PM at Faculty Cabin #3.',
+    noticeType: 'ASSIGNMENT_REMINDER',
+    createdAt: '2026-09-28T14:00:00Z',
+    readByUserIds: ['user-student-1']
   }
 ];

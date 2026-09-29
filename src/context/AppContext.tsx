@@ -10,7 +10,8 @@ import {
   CampusFacility,
   InAppNotification,
   EventRegistration,
-  BookmarkItem
+  BookmarkItem,
+  DirectClassNotice
 } from '../types';
 import { StorageService } from '../services/storageService';
 import { useAuth } from './AuthContext';
@@ -35,6 +36,7 @@ interface AppContextType {
   notifications: InAppNotification[];
   bookmarks: BookmarkItem[];
   registrations: EventRegistration[];
+  classNotices: DirectClassNotice[];
 
   // Modals & Active details
   selectedNotice: Notice | null;
@@ -77,6 +79,10 @@ interface AppContextType {
   handleRejectEvent: (id: string, reason: string) => void;
   handleCreateNotice: (noticeData: Partial<Notice>) => void;
   handleCreateEvent: (eventData: Partial<CampusEvent>) => void;
+  handleSendClassNotice: (noticeData: Omit<DirectClassNotice, 'id' | 'createdAt' | 'readByUserIds'>) => void;
+  handleMarkClassNoticeRead: (id: string) => void;
+  getStudentClassAlerts: () => DirectClassNotice[];
+  getFacultySentClassNotices: () => DirectClassNotice[];
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;
   unreadNotificationsCount: number;
@@ -107,6 +113,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [notifications, setNotifications] = useState<InAppNotification[]>([]);
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
   const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
+  const [classNotices, setClassNotices] = useState<DirectClassNotice[]>([]);
 
   // Modals state
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null);
@@ -148,6 +155,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setNotifications(StorageService.getNotifications());
     setBookmarks(StorageService.getBookmarks());
     setRegistrations(StorageService.getRegistrations());
+    setClassNotices(StorageService.getClassNotices());
   }, []);
 
   useEffect(() => {
@@ -395,6 +403,40 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
+  const handleSendClassNotice = (
+    noticeData: Omit<DirectClassNotice, 'id' | 'createdAt' | 'readByUserIds'>
+  ) => {
+    const newNotice: DirectClassNotice = {
+      ...noticeData,
+      id: `cn-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      readByUserIds: []
+    };
+    StorageService.sendClassNotice(newNotice);
+    refreshAllData();
+    showToast(`Class Notice sent directly to ${noticeData.course} Sem ${noticeData.semester} students! 📢`, 'success');
+  };
+
+  const handleMarkClassNoticeRead = (id: string) => {
+    if (!currentUser) return;
+    StorageService.markClassNoticeRead(id, currentUser.id);
+    refreshAllData();
+  };
+
+  const getStudentClassAlerts = useCallback(() => {
+    if (!currentUser || role !== 'STUDENT') return [];
+    const course = currentUser.course?.includes('BCA') ? 'BCA' : currentUser.course || 'BCA';
+    const semester = currentUser.semester || 5;
+    return classNotices.filter(
+      cn => cn.course === course && cn.semester === semester
+    );
+  }, [currentUser, role, classNotices]);
+
+  const getFacultySentClassNotices = useCallback(() => {
+    if (!currentUser || role !== 'FACULTY') return [];
+    return classNotices.filter(cn => cn.facultyId === currentUser.id);
+  }, [currentUser, role, classNotices]);
+
   const markNotificationAsRead = (id: string) => {
     StorageService.markNotificationRead(id);
     refreshAllData();
@@ -457,6 +499,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         handleRejectEvent,
         handleCreateNotice,
         handleCreateEvent,
+        classNotices,
+        handleSendClassNotice,
+        handleMarkClassNoticeRead,
+        getStudentClassAlerts,
+        getFacultySentClassNotices,
         markNotificationAsRead,
         markAllNotificationsAsRead,
         unreadNotificationsCount,

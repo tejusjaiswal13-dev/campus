@@ -26,7 +26,10 @@ import {
   HelpCircle,
   Users,
   Compass,
-  FileText
+  FileText,
+  CheckCircle2,
+  MapPin,
+  Clock
 } from 'lucide-react';
 import { CampusEvent } from '../../types';
 
@@ -36,6 +39,9 @@ export const StudentHome: React.FC = () => {
     setCurrentTab,
     getStudentNotices,
     getStudentEvents,
+    getStudentClassAlerts,
+    handleMarkClassNoticeRead,
+    showToast,
     exams,
     career,
     calendar,
@@ -62,6 +68,7 @@ export const StudentHome: React.FC = () => {
 
   const studentEvents = getStudentEvents();
   const upcomingEvents = studentEvents.slice(0, 3);
+  const classAlerts = getStudentClassAlerts();
 
   // Department-specific exams
   const studentExams = exams.filter(
@@ -118,6 +125,111 @@ export const StudentHome: React.FC = () => {
         </div>
       </div>
 
+      {/* Direct Professor Class Notice Banner (High Priority Operational Alert) */}
+      {classAlerts.length > 0 && (
+        <div className="space-y-3">
+          {classAlerts.map(alert => {
+            const isRead = currentUser ? alert.readByUserIds.includes(currentUser.id) : false;
+            const isRoomChange = alert.noticeType === 'ROOM_CHANGED';
+            const isCancelled = alert.noticeType === 'CLASS_CANCELLED';
+
+            return (
+              <div
+                key={alert.id}
+                className={`rounded-2xl border p-4 sm:p-5 transition-all shadow-sm ${
+                  !isRead
+                    ? isCancelled
+                      ? 'bg-rose-50/90 border-rose-300 ring-2 ring-rose-400/20'
+                      : isRoomChange
+                      ? 'bg-amber-50/90 border-amber-300 ring-2 ring-amber-400/20'
+                      : 'bg-indigo-50/90 border-indigo-300 ring-2 ring-indigo-400/20'
+                    : 'bg-white border-slate-200/80 opacity-90'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`p-2.5 rounded-xl shrink-0 ${
+                        !isRead
+                          ? isCancelled
+                            ? 'bg-rose-600 text-white'
+                            : isRoomChange
+                            ? 'bg-amber-600 text-white'
+                            : 'bg-indigo-600 text-white'
+                          : 'bg-slate-100 text-slate-500'
+                      }`}
+                    >
+                      <BellRing className={`w-5 h-5 ${!isRead ? 'animate-bounce' : ''}`} />
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                            !isRead
+                              ? isCancelled
+                                ? 'bg-rose-200 text-rose-900'
+                                : isRoomChange
+                                ? 'bg-amber-200 text-amber-950'
+                                : 'bg-indigo-200 text-indigo-950'
+                              : 'bg-slate-200 text-slate-700'
+                          }`}
+                        >
+                          {alert.noticeType.replace('_', ' ')}
+                        </span>
+                        <span className="text-xs font-bold text-slate-800">
+                          {alert.facultyName} ({alert.subjectCode})
+                        </span>
+                        {!isRead && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-ping" />
+                            Unread Alert
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                        {alert.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        {alert.message}
+                      </p>
+
+                      <div className="flex items-center gap-3 pt-1 text-[11px] text-slate-500">
+                        <span>Class: {alert.course} Sem {alert.semester}</span>
+                        <span>•</span>
+                        <span>{new Date(alert.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                    {!isRead ? (
+                      <button
+                        onClick={() => {
+                          handleMarkClassNoticeRead(alert.id);
+                          showToast('Marked notice as read & acknowledged', 'success');
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Mark as read</span>
+                      </button>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 py-1 px-2.5 bg-slate-100 rounded-lg">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Acknowledged</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* 2. Campus Pulse (Distinctive Live Vitality Feature) */}
       <CampusPulse />
 
@@ -131,7 +243,7 @@ export const StudentHome: React.FC = () => {
             label: 'Timetable',
             sub: 'Class slots & labs',
             icon: Calendar,
-            tab: 'home',
+            tab: 'timetable',
             color: 'bg-indigo-50 text-indigo-700 border-indigo-200'
           },
           {

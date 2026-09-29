@@ -83,7 +83,43 @@ export interface User {
   designation?: string; // For faculty / HOD
   qualification?: string;
   cabinOrOffice?: string;
+  assignedClasses?: FacultyClassAssignment[];
   createdAt: string;
+}
+
+export interface FacultyClassAssignment {
+  id: string;
+  course: string;
+  semester: number;
+  subjectCode: string;
+  subjectName: string;
+  room: string;
+  studentCount: number;
+}
+
+export type ClassNoticeType =
+  | 'CLASS_CANCELLED'
+  | 'ROOM_CHANGED'
+  | 'TIME_RESCHEDULED'
+  | 'ASSIGNMENT_REMINDER'
+  | 'LAB_UPDATE'
+  | 'GENERAL_CLASS_UPDATE';
+
+export interface DirectClassNotice {
+  id: string;
+  facultyId: string;
+  facultyName: string;
+  facultyDesignation: string;
+  departmentCode: string;
+  course: string;
+  semester: number;
+  subjectCode: string;
+  subjectName: string;
+  title: string;
+  message: string;
+  noticeType: ClassNoticeType;
+  createdAt: string;
+  readByUserIds: string[];
 }
 
 export interface Notice {

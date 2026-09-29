@@ -13,6 +13,10 @@ import { AcademicCalendarView } from './components/calendar/AcademicCalendarView
 import { ExamScheduleView } from './components/exams/ExamScheduleView';
 import { CareerPortalView } from './components/career/CareerPortalView';
 import { FacultyDirectoryView } from './components/faculty/FacultyDirectoryView';
+import { FacultyClassesView } from './components/faculty/FacultyClassesView';
+import { FacultyDirectNoticeView } from './components/faculty/FacultyDirectNoticeView';
+import { FacultyStudentRosterView } from './components/faculty/FacultyStudentRosterView';
+import { StudentTimetableView } from './components/student/StudentTimetableView';
 import { DepartmentDirectoryView } from './components/departments/DepartmentDirectoryView';
 import { CampusGuideView } from './components/campus/CampusGuideView';
 import { BookmarksView } from './components/profile/BookmarksView';
@@ -33,12 +37,27 @@ import { CreateEventModal } from './components/events/CreateEventModal';
 
 const AppContent: React.FC = () => {
   const { currentTab, deviceMode, setDeviceMode } = useApp();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, role } = useAuth();
 
   const renderActiveView = () => {
     switch (currentTab) {
       case 'home':
+        if (role === 'FACULTY') return <FacultyDashboard />;
+        if (role === 'DEPARTMENT_ADMIN') return <DeptAdminDashboard />;
+        if (role === 'COLLEGE_ADMIN') return <CollegeAdminDashboard />;
         return <StudentHome />;
+      case 'timetable':
+        return <StudentTimetableView />;
+      case 'classes':
+        return <FacultyClassesView />;
+      case 'class-notices':
+        return <FacultyDirectNoticeView />;
+      case 'students':
+        return <FacultyStudentRosterView />;
+      case 'approvals':
+        return <DeptAdminDashboard />;
+      case 'users':
+        return <CollegeAdminDashboard />;
       case 'notices':
         return <NoticeList />;
       case 'events':
@@ -75,6 +94,9 @@ const AppContent: React.FC = () => {
       case 'forgot-password':
         return <ForgotPasswordView />;
       default:
+        if (role === 'FACULTY') return <FacultyDashboard />;
+        if (role === 'DEPARTMENT_ADMIN') return <DeptAdminDashboard />;
+        if (role === 'COLLEGE_ADMIN') return <CollegeAdminDashboard />;
         return <StudentHome />;
     }
   };

@@ -10,7 +10,8 @@ import {
   CampusFacility,
   InAppNotification,
   EventRegistration,
-  BookmarkItem
+  BookmarkItem,
+  DirectClassNotice
 } from '../types';
 import {
   SEED_DEPARTMENTS,
@@ -22,7 +23,8 @@ import {
   SEED_CALENDAR,
   SEED_FACULTY,
   SEED_FACILITIES,
-  SEED_NOTIFICATIONS
+  SEED_NOTIFICATIONS,
+  SEED_CLASS_NOTICES
 } from '../data/seedData';
 
 const KEYS = {
@@ -38,7 +40,8 @@ const KEYS = {
   FACULTY: 'ips_faculty_v1',
   FACILITIES: 'ips_facilities_v1',
   NOTIFICATIONS: 'ips_notifications_v1',
-  BOOKMARKS: 'ips_bookmarks_v1'
+  BOOKMARKS: 'ips_bookmarks_v1',
+  CLASS_NOTICES: 'ips_class_notices_v1'
 };
 
 function getStored<T>(key: string, defaultData: T): T {
@@ -74,6 +77,7 @@ export const StorageService = {
     setStored(KEYS.FACULTY, SEED_FACULTY);
     setStored(KEYS.FACILITIES, SEED_FACILITIES);
     setStored(KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
+    setStored(KEYS.CLASS_NOTICES, SEED_CLASS_NOTICES);
     setStored(KEYS.REGISTRATIONS, [
       {
         id: 'reg-demo-1',
@@ -385,5 +389,29 @@ export const StorageService = {
   isBookmarked: (userId: string, itemId: string): boolean => {
     const list = StorageService.getBookmarks();
     return list.some(b => b.userId === userId && b.itemId === itemId);
+  },
+
+  // Direct Faculty -> Class Notices (Operational updates without HOD approval)
+  getClassNotices: (): DirectClassNotice[] => getStored<DirectClassNotice[]>(KEYS.CLASS_NOTICES, SEED_CLASS_NOTICES),
+  sendClassNotice: (notice: DirectClassNotice): void => {
+    const list = StorageService.getClassNotices();
+    list.unshift(notice);
+    setStored(KEYS.CLASS_NOTICES, list);
+  },
+  markClassNoticeRead: (noticeId: string, studentId: string): void => {
+    const list = StorageService.getClassNotices();
+    const target = list.find(cn => cn.id === noticeId);
+    if (target && !target.readByUserIds.includes(studentId)) {
+      target.readByUserIds.push(studentId);
+      setStored(KEYS.CLASS_NOTICES, list);
+    }
+  },
+  getStudentClassNotices: (course: string, semester: number): DirectClassNotice[] => {
+    const list = StorageService.getClassNotices();
+    return list.filter(cn => cn.course === course && cn.semester === semester);
+  },
+  getFacultyClassNotices: (facultyId: string): DirectClassNotice[] => {
+    const list = StorageService.getClassNotices();
+    return list.filter(cn => cn.facultyId === facultyId);
   }
 };
